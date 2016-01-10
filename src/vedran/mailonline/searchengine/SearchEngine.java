@@ -10,12 +10,12 @@ import java.util.List;
 import java.util.Map;
 
 public class SearchEngine {
-	
+
 	static File file = null;
 	static Map<String, String> domainAbbreviations = new HashMap<String, String>();
-	
+
 	public static void main(String[] args) throws IOException {
-	
+
 		domainAbbreviations.put("alt", "alternative");
 		domainAbbreviations.put("computer", "comp");
 		domainAbbreviations.put("system", "sys");
@@ -24,9 +24,9 @@ public class SearchEngine {
 		domainAbbreviations.put("crypt", "cryptography");
 		domainAbbreviations.put("medicine", "med");
 		domainAbbreviations.put("sociology", "soc");
-		
-		AAA a = new AAA();
-//		File file;
+
+		ResourceOriginResolver a = new ResourceOriginResolver();
+		// File file;
 		try {
 			file = a.getFile();
 		} catch (IOException e) {
@@ -34,25 +34,49 @@ public class SearchEngine {
 			e.printStackTrace();
 		}
 		File[] files = file.listFiles();
-		System.out.println(files[1]);
-		
+
 		// only outside IDE!!!
-//		System.out.print("Enter something: ");
-//		String input = System.console().readLine();
-//		System.out.println(input);
-		
+		// System.out.print("Enter something: ");
+		// String input = System.console().readLine();
+		// System.out.println(input);
+
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		System.out.print("Enter search item: ");
-		String input = br.readLine();
-		System.out.println(input);
-		
-		ResponseProducer rp = new ResponseProducer(domainAbbreviations, files);
-		List<String> docs = new ArrayList<String>();
-		
-		docs = rp.getDocs(input);
-		
+		while (true) {
+			System.out.print("Enter search item: ");
+			String input = br.readLine();
+
+			if (input.equals("quit")) {
+				System.out.println("Goodbye!");
+				System.exit(0);
+			}
+
+			List<String> docs = new ArrayList<String>();
+
+			// If the search term does not contain logical expressions, rank the
+			// docs according to tf-idf metric.
+			if (!input.contains(" or ") && !input.contains(" and ")) {
+				DocumentRank dr = new DocumentRank(domainAbbreviations, files);
+				docs = dr.getRankedDocs(input);
+				System.out.println("Ranked documents: ");
+				for (String i : docs) {
+					System.out.print(i + ", ");
+					
+				}
+				System.out.println();
+				// Otherwise, find the docs corresponding to the logical
+				// expression.
+			} else {
+				ResponseProducer rp = new ResponseProducer(domainAbbreviations, files);
+				docs = rp.getDocs(input);
+				System.out.println("Documents mathing the search expression: ");
+				for (String i : docs) {
+					System.out.print(i + ", ");
+					
+				}
+				System.out.println();
+			}
+		}
+
 	}
-	
-	
-	
+
 }

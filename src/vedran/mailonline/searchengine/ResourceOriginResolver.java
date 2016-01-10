@@ -6,7 +6,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.net.URL;
 
-public class AAA {
+public class ResourceOriginResolver {
 	public File getFile() throws IOException {
 //		File file = new File(getClass().getClassLoader().getResource("path_to_files.txt").getFile());
 		ClassLoader cl = getClass().getClassLoader();

@@ -47,7 +47,7 @@ public class ResponseProducer {
 	private void parseOrs(String input) {
 		if (!input.contains(" or ")) {
 			ors.put(input, new ArrayList<String>());
-			return;
+//			return;
 		} else {
 			ors.put(input.substring(0, input.indexOf(" or ")), new ArrayList<String>());
 			parseOrs(input.substring(input.indexOf(" or ") + 4, input.length()));
@@ -95,38 +95,49 @@ public class ResponseProducer {
 			}
 			for (File file : directory.listFiles()) {
 				this.currentDoc = file.getName();
+				// System.out.println("Scanning doc: " + this.currentDoc);
 				Scanner scanner = new Scanner(file);
 				scanner.useDelimiter("\\Z");
-				String text = scanner.next();
-				findAndsInDoc(text, ands);
+				String text = scanner.next().toLowerCase();
+				// Create deep copy of the list of AND clauses
+				ArrayList<String> andsCopy = new ArrayList<String>();
+				for (String and : ands) {
+					andsCopy.add(and);
+				}
+				findAndsInDoc(text, andsCopy);
 				scanner.close();
 			}
 		}
 	}
 
+//	private boolean foundAllTerms = false;
+	
 	private void findAndsInDoc(String text, ArrayList<String> ands) {
 		if (text == null)
 			return;
-		// This is the case where all the terms have been found in the doc.
+		// This is the case where all the terms have been found in the doc (and
+		// therefore had been removed from the list below).
 		// Add the doc to the response and return.
-		if (ands == null) {
+		if (ands.size() == 0) {
 			response.add(currentDoc);
 			return;
 		} else {
-			// Tokenize the string, in order to avoid "finding" "cat" in
-			// "caterpillar".
+			// Tokenize the string, in order to avoid making "cat" in
+			// "caterpillar" a hit.
 			StringTokenizer tokens = new StringTokenizer(text);
 			String and = ands.get(0);
-			while (tokens.hasMoreTokens()) {
+			while (tokens.hasMoreTokens() && ands.size() != 0) {
 				// If the word is found, remove it from the list of AND clauses
 				// and call the function recursively
 				// for other words in the rest of the text.
-				if (and.equals(tokens.nextToken())) {
+				String token = tokens.nextToken();
+				if (ands.get(0).equals(token)) {
+//					System.out.println("HIT! Term: " + ands.get(0) + ", doc: " + this.currentDoc);
 					ands.remove(0);
 					findAndsInDoc(text.substring(text.indexOf(and) + and.length(), text.length()), ands);
 				}
 			}
-			return;
+			
 		}
 	}
 
