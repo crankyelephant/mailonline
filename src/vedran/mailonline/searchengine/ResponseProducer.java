@@ -10,6 +10,13 @@ import java.util.Scanner;
 import java.util.Set;
 import java.util.StringTokenizer;
 
+/**
+ * Produces response for queries represented as logical expressions (consisting
+ * any combination of "and" and "or" clauses").
+ * 
+ * @author vedran
+ *
+ */
 public class ResponseProducer {
 
 	private Map<String, String> domainAbbreviations = new HashMap<String, String>();
@@ -27,6 +34,12 @@ public class ResponseProducer {
 		this.directories = files;
 	}
 
+	/**
+	 * Get docs corresponding to the query represented as a logical expression.
+	 * 
+	 * @param input
+	 * @return docs as set (no repetition)
+	 */
 	Set<String> getDocs(String input) {
 		input = input.toLowerCase();
 
@@ -45,10 +58,15 @@ public class ResponseProducer {
 
 	}
 
+	/**
+	 * OR clauses are tops of the tree, so first find them.
+	 * 
+	 * @param input
+	 */
 	private void parseOrs(String input) {
 		if (!input.contains(" or ")) {
 			ors.put(input, new ArrayList<String>());
-//			return;
+			// return;
 		} else {
 			ors.put(input.substring(0, input.indexOf(" or ")), new ArrayList<String>());
 			parseOrs(input.substring(input.indexOf(" or ") + 4, input.length()));
@@ -64,6 +82,11 @@ public class ResponseProducer {
 		}
 	}
 
+	/**
+	 * For every OR clause, find AND clauses.
+	 * 
+	 * @param ands
+	 */
 	private void parseAnds(String ands) {
 		if (!ands.contains(" and ")) {
 			ors.get(this.currentOr).add(ands);
@@ -75,6 +98,12 @@ public class ResponseProducer {
 
 	private String currentDoc;
 
+	/**
+	 * For each AND clause, find the corresponding documents.
+	 * 
+	 * @param ands
+	 * @throws FileNotFoundException
+	 */
 	private void findDocsForAnds(ArrayList<String> ands) throws FileNotFoundException {
 		for (File directory : directories) {
 			StringTokenizer directoryNameComponents = new StringTokenizer(directory.getName());
@@ -96,7 +125,6 @@ public class ResponseProducer {
 			}
 			for (File file : directory.listFiles()) {
 				this.currentDoc = file.getName();
-				// System.out.println("Scanning doc: " + this.currentDoc);
 				Scanner scanner = new Scanner(file);
 				scanner.useDelimiter("\\Z");
 				String text = scanner.next().toLowerCase();
@@ -111,6 +139,12 @@ public class ResponseProducer {
 		}
 	}
 
+	/**
+	 * Search for a term (AND operand) in document.
+	 * 
+	 * @param text
+	 * @param ands
+	 */
 	private void findAndsInDoc(String text, ArrayList<String> ands) {
 		if (text == null)
 			return;
@@ -131,12 +165,11 @@ public class ResponseProducer {
 				// for other words in the rest of the text.
 				String token = tokens.nextToken();
 				if (ands.get(0).equals(token)) {
-//					System.out.println("HIT! Term: " + ands.get(0) + ", doc: " + this.currentDoc);
 					ands.remove(0);
 					findAndsInDoc(text.substring(text.indexOf(and) + and.length(), text.length()), ands);
 				}
 			}
-			
+
 		}
 	}
 
