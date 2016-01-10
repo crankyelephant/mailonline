@@ -2,7 +2,7 @@
 
 ## Setup
 The project was written in Java 1.8.
-Run the project by running the executable jar.
+Run the project by running the executable jar: _java -jar VedranGaletic_MailOnline.jar_.
 Before testing, make sure to input the correct path to the dataset in the "path_to_files.txt" file.
 
 ## Task 1. Search engine
