@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -50,28 +51,36 @@ public class SearchEngine {
 				System.exit(0);
 			}
 
-			List<String> docs = new ArrayList<String>();
-
 			// If the search term does not contain logical expressions, rank the
 			// docs according to tf-idf metric.
 			if (!input.contains(" or ") && !input.contains(" and ")) {
+				Map<Double, ArrayList<String>> docs = new HashMap<Double, ArrayList<String>>();
+
 				DocumentRank dr = new DocumentRank(domainAbbreviations, files);
 				docs = dr.getRankedDocs(input);
 				System.out.println("Ranked documents: ");
-				for (String i : docs) {
-					System.out.print(i + ", ");
-					
+
+//				HashMap<String, Double> response = new HashMap<String, Double>();
+
+				Double[] tfValues = (Double[]) (docs.keySet().toArray(new Double[docs.keySet().size()]));
+				Arrays.sort(tfValues);
+				for (int i = tfValues.length - 1; i > 0; i--) {
+					for (String fileName : docs.get(tfValues[i])) {
+						System.out.print(fileName + "(tf-idf = " + tfValues[i] + ") ");
+					}
 				}
+
 				System.out.println();
 				// Otherwise, find the docs corresponding to the logical
 				// expression.
 			} else {
+				List<String> docs = new ArrayList<String>();
 				ResponseProducer rp = new ResponseProducer(domainAbbreviations, files);
 				docs = rp.getDocs(input);
 				System.out.println("Documents mathing the search expression: ");
 				for (String i : docs) {
-					System.out.print(i + ", ");
-					
+					System.out.print(i + " ");
+
 				}
 				System.out.println();
 			}

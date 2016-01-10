@@ -3,9 +3,7 @@ package vedran.mailonline.searchengine;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.StringTokenizer;
@@ -18,7 +16,7 @@ public class DocumentRank {
 	
 	private Map<Integer, ArrayList<String>> tf = new HashMap<Integer, ArrayList<String>>();
 //	private List<Integer> tf = new ArrayList<Integer>();
-	private int idf = 0;
+	private double idf = 0;
 
 	public DocumentRank(Map<String, String> domainAbbreviations, File[] files) {
 		this.domainAbbreviations = domainAbbreviations;
@@ -31,12 +29,9 @@ public class DocumentRank {
 	}
 
 	// response as a list of doc names
-	private List<String> response = new ArrayList<String>();
+	private HashMap<Double, ArrayList<String>> response = new HashMap<Double, ArrayList<String>>();
 	
-	
-
-	
-	public List<String> getRankedDocs(String input) throws FileNotFoundException {
+	public HashMap<Double, ArrayList<String>> getRankedDocs(String input) throws FileNotFoundException {
 		input = input.toLowerCase();
 		for (File directory : directories) {
 			for (File file : directory.listFiles()) {
@@ -69,14 +64,17 @@ public class DocumentRank {
 			}
 		}
 		
-		Integer[] tfValues = (Integer[]) (tf.keySet().toArray(new Integer[tf.keySet().size()]));
-		Arrays.sort(tfValues);
+		idf = Math.log(1 + N/idf);
 		
-		for (int i = tfValues.length-1; i > 0 ; i--) {
-			for (String fileName : tf.get(tfValues[i])) {
-				response.add(fileName);
-			}
+		for (int tf : this.tf.keySet()) {
+			response.put(tf*idf, this.tf.get(tf));
 		}
+		
+//		for (int tf : this.tf.keySet()) {
+//			for (String fileName : this.tf.get(tf)) {
+//				response.put(fileName, tf*idf);
+//			}
+//		}
 		
 		return response;
 	}

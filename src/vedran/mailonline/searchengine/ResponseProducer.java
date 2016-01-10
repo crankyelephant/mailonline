@@ -110,8 +110,6 @@ public class ResponseProducer {
 		}
 	}
 
-//	private boolean foundAllTerms = false;
-	
 	private void findAndsInDoc(String text, ArrayList<String> ands) {
 		if (text == null)
 			return;
