@@ -10,6 +10,7 @@ import java.util.StringTokenizer;
 
 public class DocumentRank {
 
+	@SuppressWarnings("unused")
 	private Map<String, String> domainAbbreviations = new HashMap<String, String>();
 	private File[] directories;
 	private int N; // number of documents
@@ -69,12 +70,6 @@ public class DocumentRank {
 		for (int tf : this.tf.keySet()) {
 			response.put(tf*idf, this.tf.get(tf));
 		}
-		
-//		for (int tf : this.tf.keySet()) {
-//			for (String fileName : this.tf.get(tf)) {
-//				response.put(fileName, tf*idf);
-//			}
-//		}
 		
 		return response;
 	}

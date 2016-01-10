@@ -4,9 +4,10 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.Set;
 import java.util.StringTokenizer;
 
 public class ResponseProducer {
@@ -19,14 +20,14 @@ public class ResponseProducer {
 	private Map<String, ArrayList<String>> ors = new HashMap<String, ArrayList<String>>();
 
 	// response as a list of doc names
-	private List<String> response = new ArrayList<String>();
+	private Set<String> response = new HashSet<String>();
 
 	public ResponseProducer(Map<String, String> domainAbbreviations, File[] files) {
 		this.domainAbbreviations = domainAbbreviations;
 		this.directories = files;
 	}
 
-	List<String> getDocs(String input) {
+	Set<String> getDocs(String input) {
 		input = input.toLowerCase();
 
 		parseOrs(input);

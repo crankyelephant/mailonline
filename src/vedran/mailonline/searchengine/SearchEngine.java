@@ -4,11 +4,13 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 public class SearchEngine {
 
@@ -31,16 +33,14 @@ public class SearchEngine {
 		try {
 			file = a.getFile();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		File[] files = file.listFiles();
 
-		// only outside IDE!!!
+		// only outside IDE:
 		// System.out.print("Enter something: ");
 		// String input = System.console().readLine();
 		// System.out.println(input);
-
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		while (true) {
 			System.out.print("Enter search item: ");
@@ -60,7 +60,8 @@ public class SearchEngine {
 				docs = dr.getRankedDocs(input);
 				System.out.println("Ranked documents: ");
 
-//				HashMap<String, Double> response = new HashMap<String, Double>();
+				// HashMap<String, Double> response = new HashMap<String,
+				// Double>();
 
 				Double[] tfValues = (Double[]) (docs.keySet().toArray(new Double[docs.keySet().size()]));
 				Arrays.sort(tfValues);
@@ -74,13 +75,22 @@ public class SearchEngine {
 				// Otherwise, find the docs corresponding to the logical
 				// expression.
 			} else {
-				List<String> docs = new ArrayList<String>();
+				Set<String> docs = new HashSet<String>();
 				ResponseProducer rp = new ResponseProducer(domainAbbreviations, files);
 				docs = rp.getDocs(input);
 				System.out.println("Documents mathing the search expression: ");
-				for (String i : docs) {
-					System.out.print(i + " ");
+				if (docs.size() > 500) {
+					PrintWriter out = new PrintWriter("results.txt");
+					for (String i : docs) {
+						out.println(i);
+					}
+					out.close();
+					System.out.println("Too many results. Check the file \"results.txt\".");
+				} else {
+					for (String i : docs) {
+						System.out.print(i + " ");
 
+					}
 				}
 				System.out.println();
 			}
