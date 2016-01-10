@@ -17,11 +17,13 @@ The generated search results for "science", "science and religion", and "science
 
 ## Task 2. tf-idf ranking
 
-If the input is a term without logical operators, then the ranking subroutine is invoked, which yields the documents ranked according to their tf-idf value for the term, along with the value in the parentheses.
+If the input is a term without logical operators ("and", "or", surrounded by spaces), then the ranking method is invoked, which yields the documents ranked according to their tf-idf value for the term, along with the value in the parentheses.
 
 ## Task 3. Suggestions for improvement
 
 * Include a morphological generator that would enable including "scientific", "scientist", etc. as search terms if the input is "science".
-* Treat content words (nouns, verbs, adjectives...) differently than functional words (conjunctions, prepositions...) and pronouns.
+* Treat content words (nouns, verbs, adjectives...) differently from functional words (conjunctions, prepositions...) and pronouns. Possibly treat functional words as modifiers of search procedure.
 * Inculde an ontology or Wordnet for hierarchical awareness. E.g., for input "canine or wolf" search only for the superordinate term "canine".
 * Give different weight factors to occurrences in text vs. position in a relevant folder. The factors may be modified through search engine performance assessment.
+* Employ distributional semantics for matching a document against a term. For example, if we knew the distributional vector of the term and calculate the distributional vector of the doc, we might calculate the cosine similary between the two.
+* Employing a distributed data analysis technology would improve the performance of the system. For example, Spark upon commodity hardware, or pure map-reduce jobs upon Hadoop ecosystem (e.g., assign different OR clauses to different nodes).
